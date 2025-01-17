@@ -1,5 +1,6 @@
 import pyrebase
 import click
+import pwinput 
 
 firebaseConfig = {
 
@@ -22,29 +23,42 @@ firebaseConfig = {
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
 
+@click.group():
+def cli():
+    pass
+
+@cli.command()
+click.echo("Login to your account")
 def login():
-    email = input("enter email: ")
-    password = input("enter password: ")
+    email = click.prompt("enter email: ",type = str)
+    password = click.prompt("enter password: ",mask ="*")
     try:
         login = auth.sign_in_with_email_and_password(email,password)
+        click.echo("Login successful!!")
     except:
-        print("Invalid email or password")
+        click.echo("Invalid email or password")
     return
 
-
+@cli.command()
+click.echo("Create an Account")
 def SignUp():
-    email = input("enter password: ")
-    password = input("enter password: ")
+    email = click.prompt("enter password: ",type = str)
+    password = click.prompt("enter password: ",mask ="*")
+    confirm_password = pwinput(prompt = "confirm password: ",mask ="*")
+    if password != confirm_password:
+        click.echo("passwords do not match!")
+        return
+    click.echo("Below state if you're a Mentor or Mentee")
+    role = click.prompt("Enter your role: ",type =str)
+    if role not in "mentor,mentee":
+        click.echo("Invalid input,please enter the correct input")
+        return
     try:
         user = auth.create_user_with_email_and_password(email,password)
+        click.echo("Account created successfully")
     except:
-        print("email already exists!")
+        click.echo("Email already exists!")
     return
 
-
-ans = input("Do you have an account? [y/n]")
-
-if ans == "n":
-    login()
-else:
-    SignUp()
+if __name__=="__main__":
+       cli()
