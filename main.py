@@ -23,13 +23,14 @@ firebaseConfig = {
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
 
-@click.group():
+@click.group()
 def cli():
     pass
 
 @cli.command()
-click.echo("Login to your account")
+
 def login():
+    click.echo("Login to your account")
     email = click.prompt("enter email: ",type = str)
     password = click.prompt("enter password: ",mask ="*")
     try:
@@ -40,8 +41,9 @@ def login():
     return
 
 @cli.command()
-click.echo("Create an Account")
+
 def SignUp():
+    click.echo("Create an Account")
     email = click.prompt("enter password: ",type = str)
     password = click.prompt("enter password: ",mask ="*")
     confirm_password = pwinput(prompt = "confirm password: ",mask ="*")
