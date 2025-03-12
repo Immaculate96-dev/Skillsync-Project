@@ -1,7 +1,7 @@
 import click
 from authentication import get_auth,get_db
 
-
+#
 @cli.command()
 def book_session():
     email = click.prompt("Enter your email", type=str)
