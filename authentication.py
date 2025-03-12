@@ -29,7 +29,7 @@ firebaseConfig = {
 
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
-cred = credentials.Certificate("serviceAccountKey.json")  # Replace with your Firebase credentials file
+cred = credentials.Certificate("credentials.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 # Initialize Firebase Admin SDK
@@ -60,26 +60,25 @@ def login():
 
 
 def signup():
-    """User Registration with Role"""
     click.echo("Create an Account")
     email = click.prompt("Enter email", type=str)
     password = click.prompt("Enter password", hide_input=True)
     confirm_password = click.prompt("Confirm password", hide_input=True)
 
     if password != confirm_password:
-        click.echo("❌ Passwords do not match!")
+        click.echo("Passwords do not match!")
         return
 
     role = click.prompt("Are you a mentor or mentee?", type=str).lower()
     if role not in ["mentor", "mentee"]:
-        click.echo("❌ Invalid role! Choose 'mentor' or 'mentee'.")
+        click.echo("Invalid role! Choose 'mentor' or 'mentee'.")
         return
 
     try:
         user = auth.create_user_with_email_and_password(email, password)
         user_id = user["localId"]
 
-        # Save user info in Firestore
+    
         db.collection("users").document(user_id).set({
             "email": email,
             "role": role
