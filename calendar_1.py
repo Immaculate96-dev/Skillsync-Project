@@ -1,4 +1,5 @@
 import os
+import click
 import datetime
 import google.auth
 from google.oauth2 import service_account
@@ -21,11 +22,11 @@ def list_events():
     events = events_result.get("items", [])
 
     if not events:
-        print("No upcoming events found.")
+        click.echo("No upcoming events found.")
     else:
         for event in events:
             start = event["start"].get("dateTime", event["start"].get("date"))
-            print(f"{start}: {event['summary']}")
+            click.echo(f"{start}: {event['summary']}")
 
 def create_event(Mentorship_Session, start_time, end_time):
     #Creates a new event in Google Calendar
@@ -35,7 +36,22 @@ def create_event(Mentorship_Session, start_time, end_time):
         "end": {"dateTime": end_time, "timeZone": "UTC"},
     }
     event = service.events().insert(calendarId="primary", body=event).execute()
-    print(f"Event created: {event.get('htmlLink')}")
+    
+    event = {
+        "summary": event_details["summary"],
+        "location": event_details["location"],
+        "description": event_details["description"],
+        "start": {"dateTime": event_details["start_time"], "timeZone": "UTC"},
+        "end": {"dateTime": event_details["end_time"], "timeZone": "UTC"},
+        "attendees": [{"email": event_details["attendee_email"]}],
+    }
+
+
+
+    click.echo(f"Event created: {event.get('htmlLink')}")
+
+
+
 
 if __name__ == "__main__":
     list_events()
