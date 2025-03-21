@@ -89,6 +89,48 @@ def signup():
     except:
         click.echo("Error: Email already exists!")
 
+
+@click.option("--expertise", "-e", type=str, help="Filter by expertise (e.g., Python, Java)")
+@click.option("--availability", "-a", type=str, help="Filter by availability (e.g., Monday 10:00-12:00)")
+def search_users(expertise, availability):
+    #Search for mentors/peers by expertise or availability
+    users = db.child("users").get().val()
+    
+    if not users:
+        click.echo("No users found in the database.")
+        return
+
+    filtered_users = []
+    
+    for user_id, user_data in users.items():
+        if expertise and expertise not in user_data.get("expertise", []):
+            continue  # Skip users who don’t match expertise
+        
+        if availability and availability not in user_data.get("availability", []):
+            continue  # Skip users who don’t match availability
+        
+        filtered_users.append(user_data)
+
+    if filtered_users:
+        click.echo("Available mentors/peers:")
+        for user in filtered_users:
+            click.echo(f"- {user['name']} ({user['role']}) | Expertise: {', '.join(user.get('expertise', []))}")
+    else:
+        click.echo("No users found matching the filters.")
+
+if __name__ == "__main__":
+    search_users()
+
+
+
+
+
+
+
+
+
+
+
     
 if __name__=="__main__":
        cli()
